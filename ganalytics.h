@@ -1,6 +1,9 @@
 #ifndef GANALYTICS_H
 #define GANALYTICS_H
 
+#define QT_GUI_LIB
+#define QT_QML_LIB
+
 #include <QObject>
 #include <QVariantMap>
 
@@ -77,6 +80,8 @@ public:
 public slots:
     void sendScreenView(const QString &screenName,
                         const QVariantMap &customValues = QVariantMap());
+    void sendPageView(const QString& pageName,
+                        const QVariantMap& customValues = QVariantMap());
     void sendAppView(const QString &screenName,
                      const QVariantMap &customValues = QVariantMap());
     void sendEvent(const QString &category,

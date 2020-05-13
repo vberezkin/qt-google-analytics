@@ -101,7 +101,7 @@ GAnalytics::Private::Private(GAnalytics *parent)
 : QObject(parent)
 , q(parent)
 , networkManager(NULL)
-, request(QUrl("http://www.google-analytics.com/collect"))
+, request(QUrl("https://www.google-analytics.com/collect"))
 , logLevel(GAnalytics::Error)
 , isSending(false)
 {
@@ -722,6 +722,19 @@ void GAnalytics::sendScreenView(const QString &screenName,
     d->enqueQueryWithCurrentTime(query);
 }
 
+void GAnalytics::sendPageView(const QString& pageName,
+                                const QVariantMap& customValues) {
+    d->logMessage(Info, QString("PageView: %1").arg(pageName));
+
+    QUrlQuery query = d->buildStandardPostQuery("pageview");
+    query.addQueryItem("dl", pageName);
+    query.addQueryItem("an", d->appName);
+    query.addQueryItem("av", d->appVersion);
+    appendCustomValues(query, customValues);
+
+    d->enqueQueryWithCurrentTime(query);
+}
+
 /**
  * This method is called whenever a button was pressed in the application.
  * A query for a POST message will be created to report this event. The
@@ -735,6 +748,8 @@ void GAnalytics::sendEvent(const QString &category, const QString &action,
                            const QString &label, const QVariant &value,
                            const QVariantMap &customValues)
 {
+    d->logMessage(Info, QString("sendEvent: %1 %2 %3").arg(category).arg(action).arg(label));
+
     QUrlQuery query = d->buildStandardPostQuery("event");
     query.addQueryItem("an", d->appName);
     query.addQueryItem("av", d->appVersion);
